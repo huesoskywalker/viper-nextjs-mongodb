@@ -7,9 +7,7 @@
     },
     "dependencies": {
         "@next-auth/mongodb-adapter": "^1.1.1",
-        "graphql": "^16.6.0",
         "mongodb": "^4.12.0",
-        "mongoose": "^6.7.2",
         "next": "latest",
         "next-auth": "^4.16.4",
         "react": "^18.2.0",
