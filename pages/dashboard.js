@@ -1,11 +1,11 @@
 import clientPromise from "../lib/mongodb"
-import { getSession, useSession, getCsrfToken, unstable_getServerSession } from "next-auth/react"
+import { getSession, useSession, getCsrfToken } from "next-auth/react"
 import { useState } from "react"
 
 export async function getServerSideProps(context) {
     const session = await getSession(context)
+
     // console.log(session)
-    // const session = await unstable_getServerSession(context.req, context.res, authOptions)
     // try {
     const query = await getCsrfToken(context)
     const client = await clientPromise
@@ -19,6 +19,7 @@ export async function getServerSideProps(context) {
     const filtered = viper.map((property) => {
         // const price = JSON.parse(JSON.stringify(property.price))
         return {
+            _id: property._id,
             event_id: property.event_id,
             event_name: property.event_name,
             location: property.location,
@@ -32,7 +33,7 @@ export async function getServerSideProps(context) {
         props: {
             csrfToken: await getCsrfToken(context),
             properties: filtered,
-            session: session,
+            data: session,
         },
     }
     // } catch (error) {
@@ -40,26 +41,25 @@ export async function getServerSideProps(context) {
     // }
 }
 
-export default function AdminDashboard({ csrfToken, properties }) {
-    const { data: session } = useSession()
-    // console.log(session)
-
+export default function AdminDashboard({ csrfToken, properties, data }) {
     // session is always non-null inside this page, all the way down the React tree.
-
     const [oldEvent, setOldEvent] = useState(false)
+
+    const userId = data.user._id
 
     const handleSubmit = async (event) => {
         const data = {
-            event_id: event.target.csrfToken.value,
+            event_id: userId,
             name: event.target.name.value,
             location: event.target.location.value,
             date: event.target.date.value,
             category: event.target.category.value,
         }
+        console.log(data)
         const JSONdata = JSON.stringify(data)
         const endpoint = "/api/form"
         const options = {
-            method: "POST",
+            method: "PUT",
             headers: {
                 "Content-type": "application/json",
             },
@@ -109,6 +109,7 @@ export default function AdminDashboard({ csrfToken, properties }) {
             <div>
                 <form onSubmit={handleSubmit}>
                     <input name="csrfToken" type="hidden" defaultValue={csrfToken} />
+
                     <label htmlFor="name">Event</label>
                     <input type="text" id="name" name="name" required />
 
@@ -153,6 +154,8 @@ export default function AdminDashboard({ csrfToken, properties }) {
                     {oldEvent ? (
                         <div>
                             <form onSubmit={handleEdit}>
+                                <input name="csrfToken" type="hidden" defaultValue={csrfToken} />
+
                                 <label htmlFor="name">Event</label>
                                 <input type="text" id="name" name="name" required />
 

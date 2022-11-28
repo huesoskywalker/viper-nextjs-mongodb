@@ -14,7 +14,7 @@ import "../styles/globals.css"
 function Auth({ children }) {
     const { data: session, status } = useSession()
     const isUser = session?.user.role
-    console.log("is this what we are consoling \n" + isUser + "\n Seems it is true, bra")
+    // console.log("is this what we are consoling \n" + isUser + "\n Seems it is true, bra")
     useEffect(() => {
         if (status === "loading") return // Do nothing while loading
         if (!isUser) signIn() // If not authenticated, force log in

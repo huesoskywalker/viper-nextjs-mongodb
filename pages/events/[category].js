@@ -15,6 +15,7 @@ export async function getServerSideProps(context) {
 
     const filtered = viper.map((property) => {
         return {
+            _id: property._id,
             event_id: property.event_id,
             event_name: property.event_name,
             location: property.location,
