@@ -29,11 +29,14 @@ export default async function handler(req, res) {
 
         // create a document to insert
         const event = {
-            event_id: body.event_id,
+            organizer: body.organizer,
+            // event_id: body.event_id,
             event_name: body.name,
             location: body.location,
             date: body.date,
             category: body.category.toLowerCase(),
+            comment: [],
+            likes: [],
         }
 
         const response = await viper.insertOne(event)

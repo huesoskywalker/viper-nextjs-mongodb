@@ -7,12 +7,11 @@ export async function getServerSideProps(context) {
 
     // console.log(session)
     // try {
-    const query = await getCsrfToken(context)
     const client = await clientPromise
     const database = client.db("viperDb")
     const properties = await database
         .collection("organized_events")
-        .find({ event_id: query })
+        .find({ organizer: session.user?._id })
         .toArray()
     const viper = JSON.parse(JSON.stringify(properties))
 
@@ -20,14 +19,17 @@ export async function getServerSideProps(context) {
         // const price = JSON.parse(JSON.stringify(property.price))
         return {
             _id: property._id,
-            event_id: property.event_id,
+            organizer: property.organizer,
             event_name: property.event_name,
             location: property.location,
             date: property.date,
             category: property.category,
+            comment: property.comment,
+            likes: property.likes,
             // price: price.$numberDecimal,
         }
     })
+    console.log(filtered)
 
     return {
         props: {
@@ -49,11 +51,13 @@ export default function AdminDashboard({ csrfToken, properties, data }) {
 
     const handleSubmit = async (event) => {
         const data = {
-            event_id: userId,
+            organizer: userId,
+            // event_id: event._id,
             name: event.target.name.value,
             location: event.target.location.value,
             date: event.target.date.value,
             category: event.target.category.value,
+            comment: [],
         }
         console.log(data)
         const JSONdata = JSON.stringify(data)
@@ -70,7 +74,7 @@ export default function AdminDashboard({ csrfToken, properties, data }) {
     }
     const edit = async (property) => {
         const data = {
-            event_id: property.event_id,
+            // event_id: property.event_id,
             event_name: property.event_name,
             location: property.location,
             date: property.date,
@@ -82,7 +86,8 @@ export default function AdminDashboard({ csrfToken, properties, data }) {
     const handleEdit = async (event) => {
         const data = {
             editedEvent: {
-                event_id: oldEvent.event_id,
+                organizer: oldEvent.organizer,
+                // event_id: oldEvent.event_id,
                 event_name: event.target.name.value,
                 location: event.target.location.value,
                 date: event.target.date.value,

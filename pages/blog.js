@@ -1,9 +1,11 @@
 import { getCsrfToken, getSession, useSession } from "next-auth/react"
-import { useState } from "react"
+// import { useState } from "react"
 import clientPromise from "../lib/mongodb"
+// import { ObjectId } from "mongodb"
 
 export async function getServerSideProps(context) {
     const session = await getSession(context)
+    // const sessionId = session.user?._id
     if (!session) {
         return {
             redirect: {
@@ -16,24 +18,44 @@ export async function getServerSideProps(context) {
     const client = await clientPromise
     const database = client.db("viperDb")
     const properties = await database
-        .collection("participated_events")
-        .find({ event_id: await getCsrfToken(context) })
+        .collection("users")
+        .aggregate([
+            {
+                $unwind: "$participated",
+            },
+            {
+                $project: {
+                    _id: 0,
+                    name: 0,
+                    email: 0,
+                    image: 0,
+                    emailVerified: 0,
+                    role: 0,
+                },
+            },
+
+            {
+                $limit: 20,
+            },
+        ])
         .toArray()
+
     const viper = JSON.parse(JSON.stringify(properties))
 
     const filtered = viper.map((property) => {
         // const price = JSON.parse(JSON.stringify(property.price))
         return {
-            _id: property._id,
-            event_id: property.event_id,
-            event_name: property.event_name,
-            location: property.location,
-            date: property.date,
-            category: property.category,
-            comment: property.comment,
-            // price: price.$numberDecimal,
+            _id: property.participated.event_id,
+            event_name: property.participated.event_name,
+            location: property.participated.location,
+            date: property.participated.date,
+            category: property.participated.category,
+            // comment: property.comment,
+            // likes: property.likes,
+            // // price: price.$numberDecimal,
         }
     })
+    // console.log(filtered)
 
     return {
         props: {
@@ -46,47 +68,49 @@ export async function getServerSideProps(context) {
 
 const blog = ({ data, properties }) => {
     const { data: session } = useSession()
-    const [postComment, setPostComment] = useState([])
-    const [changeText, setChangeText] = useState(false)
+    // const [postComment, setPostComment] = useState([])
+    // const [changeText, setChangeText] = useState(false)
 
-    const handleChange = (e) => {
-        return setChangeText(!changeText)
-    }
+    // const handleChange = (property) => {
+    //     return setChangeText(!changeText)
+    // }
 
-    const submitComment = async (property) => {
-        const data = {
-            event_id: property.event_id,
-            event_name: property.event_name,
-            location: property.location,
-            date: property.date,
-            category: property.category,
-            comment: postComment,
-        }
+    // const submitComment = async (property) => {
+    //     const data = {
+    //         _id: property._id,
+    //         organizer: property.organizer,
+    //         // event_name: property.event_name,
+    //         // location: property.location,
+    //         // date: property.date,
+    //         // category: property.category,
+    //         comment: postComment,
+    //         // likes: property.likes,
+    //     }
 
-        const JSONdata = JSON.stringify(data)
-        const endpoint = "/api/comment"
-        const options = {
-            method: "POST",
-            headers: {
-                "Content-type": "application/json",
-            },
-            body: JSONdata,
-        }
-        const response = await fetch(endpoint, options)
-        const result = await response.json()
-        console.log(result)
-    }
+    //     const JSONdata = JSON.stringify(data)
+    //     const endpoint = "/api/comment"
+    //     const options = {
+    //         method: "POST",
+    //         headers: {
+    //             "Content-type": "application/json",
+    //         },
+    //         body: JSONdata,
+    //     }
+    //     const response = await fetch(endpoint, options)
+    //     const result = await response.json()
+    //     // console.log(result)
+    // }
 
     return (
         <div>
             {data}
             <div>
-                <input
+                {/* <input
                     type="text"
                     id="comment"
                     onChange={(e) => setPostComment(e.target.value)}
                     required
-                />
+                /> */}
                 {properties ? (
                     properties.map((property) => (
                         <div key={property._id}>
@@ -100,7 +124,8 @@ const blog = ({ data, properties }) => {
                             <div>
                                 <p>{property.category}</p>
                             </div>
-                            {changeText ? (
+                            <div>{/* <p>likes: {property.likes.length}</p> */}</div>
+                            {/* {changeText ? (
                                 property.comment.map((singleComment) => (
                                     <div>
                                         <h1>{singleComment}</h1>
@@ -111,7 +136,7 @@ const blog = ({ data, properties }) => {
                             )}
 
                             <button onClick={() => submitComment(property)}>Comment</button>
-                            <button onClick={(e) => handleChange()}>Show Comments</button>
+                            <button onClick={() => handleChange(property)}>Show Comments</button> */}
                         </div>
                     ))
                 ) : (

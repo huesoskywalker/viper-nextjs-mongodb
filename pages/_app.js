@@ -1,15 +1,8 @@
-import { SessionProvider, useSession } from "next-auth/react"
+import { SessionProvider, useSession, signIn } from "next-auth/react"
 import { useEffect } from "react"
 import Layout from "../components/Layout"
+import Sidebar from "../components/Sidebar"
 import "../styles/globals.css"
-
-// function Auth({ children }) {
-//     const { status } = useSession({ required: true })
-
-//     if (status === "loading") return <div>Loading...</div>
-
-//     return children
-// }
 
 function Auth({ children }) {
     const { data: session, status } = useSession()
@@ -42,6 +35,7 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
                     <Component {...pageProps} />
                 )}
             </Layout>
+            {/* <Sidebar /> */}
         </SessionProvider>
     )
 }
