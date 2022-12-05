@@ -23,10 +23,16 @@ const Nav = () => {
                 <li>
                     <Link href="/admin">Admin</Link>
                 </li>
+                <li>
+                    <Link href="/adduser">Adduser</Link>
+                </li>
+                <li>
+                    <Link href="/api/search">Search</Link>
+                </li>
                 {/* <li>
                     <Link href="/register">Register</Link>
                 </li> */}
-               
+
                 {session ? (
                     <li>
                         <Link href="#" onClick={() => signOut()}>

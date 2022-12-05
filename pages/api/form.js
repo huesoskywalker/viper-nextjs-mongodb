@@ -37,6 +37,7 @@ export default async function handler(req, res) {
             category: body.category.toLowerCase(),
             comment: [],
             likes: [],
+            participants: [],
         }
 
         const response = await viper.insertOne(event)

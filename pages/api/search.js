@@ -18,6 +18,7 @@ export default async function (req, res) {
                     event_name: 1,
                     location: 1,
                     date: 1,
+                    category: 1,
                 },
             },
             {
@@ -26,36 +27,36 @@ export default async function (req, res) {
         ])
         .toArray()
 
-        // .collection("users")
-        // .find({ participated: Object }, { _id: 0, event_name: 1 })
-        // .toArray()
+    // .collection("users")
+    // .find({ participated: Object }, { _id: 0, event_name: 1 })
+    // .toArray()
 
-        // .collection("users")
-        // .find({ participated: { $elemMatch: { event_name: "This is the first event" } } })
-        // .toArray()
+    // .collection("users")
+    // .find({ participated: { $elemMatch: { event_name: "This is the first event" } } })
+    // .toArray()
 
-        .collection("users")
-        .aggregate([
-            // {
-            //     $match: {
-            //         participated: { $elemMatch: { event_name: "This is the first event" } },
-            //     },
-            // },
-            {
-                $unwind: "$participated",
-            },
-            {
-                $project: {
-                    event_id: 0,
-                    organizer: 0,
-                },
-            },
-            // {
-            //     $limit: 10,
-            // },
-        ])
-        .toArray()
+    //     .collection("users")
+    //     .aggregate([
+    //         // {
+    //         //     $match: {
+    //         //         participated: { $elemMatch: { event_name: "This is the first event" } },
+    //         //     },
+    //         // },
+    //         {
+    //             $unwind: "$participated",
+    //         },
+    //         {
+    //             $project: {
+    //                 event_id: 0,
+    //                 organizer: 0,
+    //             },
+    //         },
+    //         // {
+    //         //     $limit: 10,
+    //         // },
+    //     ])
+    //     .toArray()
 
-    console.log(viper)
+    // console.log(viper)
     res.json(viper)
 }

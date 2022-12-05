@@ -33,6 +33,17 @@ export default async function handler(req, res) {
         }
     )
 
+    const tracker = await db.collection("organized_events").findOneAndUpdate(
+        {
+            _id: ObjectId(body._id),
+        },
+        {
+            $push: {
+                participants: sessionId,
+            },
+        },
+        { upsert: true }
+    )
     // const viper = await db
     //     .collection("users")
     //     .aggregate([
@@ -51,5 +62,5 @@ export default async function handler(req, res) {
 
     // console.log(viper)
 
-    res.json(viper)
+    res.json(viper, tracker)
 }

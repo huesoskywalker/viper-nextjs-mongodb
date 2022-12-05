@@ -2,8 +2,12 @@ import { builtinModules } from "module"
 import clientPromise from "../../lib/mongodb"
 import { ObjectId } from "mongodb"
 // import { comments } from "../blog"
+import { unstable_getServerSession } from "next-auth"
+import { authOptions } from "./auth/[...nextauth]"
 
 export default async function handler(req, res) {
+    const session = await unstable_getServerSession(req, res, authOptions)
+    const sessionId = session.user?.name
     // res.status(200).json(comments)
 
     const body = req.body
@@ -21,7 +25,8 @@ export default async function handler(req, res) {
                 // event_name: body.event_name,
                 // event_location: body.event_location,
             },
-            { $push: { comment: body.comment } }
+            // { $push: { comment: body.comment } }
+            { $push: { comment: [sessionId, body.comment] } }
             // { upsert: true }
         )
         console.log(response)

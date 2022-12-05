@@ -29,7 +29,6 @@ export async function getServerSideProps(context) {
             // price: price.$numberDecimal,
         }
     })
-    console.log(filtered)
 
     return {
         props: {
@@ -106,7 +105,7 @@ export default function AdminDashboard({ csrfToken, properties, data }) {
             body: JSONdata,
         }
         const response = await fetch(endpoint, options)
-        const result = await response.json()(`Good? ${result}`)
+        const result = await response.json()
     }
 
     return (

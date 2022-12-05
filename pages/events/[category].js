@@ -6,6 +6,7 @@ export async function getServerSideProps(context) {
     const { params, query } = context
     // console.log(req.headers.cookie)
     // res.setHeader("Set-Cookie", ["name=viper"])
+    console.log(query)
 
     const { category } = params
 
@@ -13,7 +14,6 @@ export async function getServerSideProps(context) {
     const database = client.db("viperDb")
     const collection = await database.collection("organized_events").find(query).toArray()
     const viper = JSON.parse(JSON.stringify(collection))
-
     const filtered = viper.map((property) => {
         return {
             _id: property._id,
@@ -25,6 +25,7 @@ export async function getServerSideProps(context) {
             category: property.category,
             comment: property.comment,
             likes: property.likes,
+            participants: property.participants,
         }
     })
     console.log(filtered)
@@ -134,10 +135,12 @@ const EventsListByCategory = ({ events, category }) => {
                                 {event.date} {event.category}
                             </h4>
                             <p>Likes: {event.likes.length}</p>
+                            <p>Participants: {event.participants.length}</p>
                             {changeText ? (
                                 event.comment.map((singleComment) => (
                                     <div>
-                                        <h1>{singleComment}</h1>
+                                        <p>{singleComment[0]}</p>
+                                        <h2>{singleComment[1]}</h2>
                                     </div>
                                 ))
                             ) : (
