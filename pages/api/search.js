@@ -1,6 +1,9 @@
 import clientPromise from "../../lib/mongodb"
 
 export default async function (req, res) {
+
+    const body = req.body
+
     const client = await clientPromise
 
     const db = client.db("viperDb")
@@ -9,7 +12,7 @@ export default async function (req, res) {
         .aggregate([
             {
                 $match: {
-                    category: "food",
+                    category: body.find,
                 },
             },
             {

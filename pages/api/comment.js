@@ -9,7 +9,6 @@ export default async function handler(req, res) {
     const session = await unstable_getServerSession(req, res, authOptions)
     const sessionId = session.user?.name
     // res.status(200).json(comments)
-
     const body = req.body
 
     async function run() {

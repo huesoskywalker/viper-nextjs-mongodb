@@ -1,7 +1,6 @@
 import { useSession, getSession, getCsrfToken } from "next-auth/react"
 import { InferGetServerSidePropsType } from "next"
 import clientPromise from "../lib/mongodb"
-import Link from "next/link"
 
 export async function getServerSideProps(context) {
     const session = await getSession(context)
@@ -10,28 +9,12 @@ export async function getServerSideProps(context) {
     try {
         await clientPromise
 
-        // `await clientPromise` will use the default database passed in the MONGODB_URI
-        // However you can use another database (e.g. myDatabase) by replacing the `await clientPromise` with the following code:
-        //
-
         // const query = await getCsrfToken(context)
-        // console.log(query)
         const client = await clientPromise
         const db = client.db("viperDb")
         const users = await db.collection("users").findOne({ name: name, email: email })
 
-        // const user = await users.findOne(query)
         const viper = JSON.parse(JSON.stringify(users))
-
-        // const filtered = viper?.map((property: any) => {
-        //     return {
-        //         _id: property._id,
-        //     }
-        // })
-        // console.log(filtered)
-        //
-        // Then you can execute queries against your database like so:
-        // db.find({}) or any of the MongoDB Node Driver commands
 
         return {
             props: {

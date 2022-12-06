@@ -18,19 +18,16 @@ const Nav = () => {
                     <Link href="/blog">Blog</Link>
                 </li>
                 <li>
+                    <Link href="/chats">Chats</Link>
+                </li>
+                <li>
                     <Link href="/dashboard">Dashboard</Link>
                 </li>
                 <li>
                     <Link href="/admin">Admin</Link>
                 </li>
-                <li>
-                    <Link href="/adduser">Adduser</Link>
-                </li>
-                <li>
-                    <Link href="/api/search">Search</Link>
-                </li>
                 {/* <li>
-                    <Link href="/register">Register</Link>
+                    <Link href="/api/search">Search</Link>
                 </li> */}
 
                 {session ? (

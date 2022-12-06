@@ -22,15 +22,27 @@ export default async function handler(req, res) {
 
     const client = await clientPromise
     const db = client.db("viperDb")
-    const collection = await db.collection("chats").insertOne(
+    const collection = await db.collection("chats").updateOne(
         {
             // $push: {
-            members: [sessionId, body._id],
+            // members: [sessionId, body._id],
             // messages: {
             //     sender: [],
             //     message: [],
             // },
             // },
+
+            $or: [
+                {
+                    members: [sessionId, body._id],
+                },
+                {
+                    members: [body._id, sessionId],
+                },
+            ],
+        },
+        {
+            $setOnInsert: { members: [sessionId, body._id] },
         },
         { upsert: true }
         //  {

@@ -1,5 +1,5 @@
 import { getCsrfToken, getSession, useSession } from "next-auth/react"
-// import { useState } from "react"
+import { useState } from "react"
 import clientPromise from "../lib/mongodb"
 // import { ObjectId } from "mongodb"
 
@@ -41,6 +41,7 @@ export async function getServerSideProps(context) {
         .toArray()
 
     const viper = JSON.parse(JSON.stringify(properties))
+    console.log(viper)
 
     const filtered = viper.map((property) => {
         // const price = JSON.parse(JSON.stringify(property.price))
@@ -55,7 +56,6 @@ export async function getServerSideProps(context) {
             // // price: price.$numberDecimal,
         }
     })
-    // console.log(filtered)
 
     return {
         props: {
@@ -68,50 +68,23 @@ export async function getServerSideProps(context) {
 
 const blog = ({ data, properties }) => {
     const { data: session } = useSession()
-    // const [postComment, setPostComment] = useState([])
-    // const [changeText, setChangeText] = useState(false)
+    const [showEvents, setShowEvents] = useState(false)
 
-    // const handleChange = (property) => {
-    //     return setChangeText(!changeText)
-    // }
+    const handleEvents = () => {
+        return setShowEvents(!showEvents)
+    }
 
-    // const submitComment = async (property) => {
-    //     const data = {
-    //         _id: property._id,
-    //         organizer: property.organizer,
-    //         // event_name: property.event_name,
-    //         // location: property.location,
-    //         // date: property.date,
-    //         // category: property.category,
-    //         comment: postComment,
-    //         // likes: property.likes,
-    //     }
-
-    //     const JSONdata = JSON.stringify(data)
-    //     const endpoint = "/api/comment"
-    //     const options = {
-    //         method: "POST",
-    //         headers: {
-    //             "Content-type": "application/json",
-    //         },
-    //         body: JSONdata,
-    //     }
-    //     const response = await fetch(endpoint, options)
-    //     const result = await response.json()
-    //     // console.log(result)
-    // }
+    const handleUsers = () => {
+        return
+    }
 
     return (
         <div>
             {data}
             <div>
-                {/* <input
-                    type="text"
-                    id="comment"
-                    onChange={(e) => setPostComment(e.target.value)}
-                    required
-                /> */}
-                {properties ? (
+                <button onClick={handleEvents}>show/hide events</button>
+                <button onClick={handleUsers}>show/hide users</button>
+                {showEvents ? (
                     properties.map((property) => (
                         <div key={property._id}>
                             <h1 id="event_name">{property.event_name}</h1>
@@ -124,19 +97,6 @@ const blog = ({ data, properties }) => {
                             <div>
                                 <p>{property.category}</p>
                             </div>
-                            <div>{/* <p>likes: {property.likes.length}</p> */}</div>
-                            {/* {changeText ? (
-                                property.comment.map((singleComment) => (
-                                    <div>
-                                        <h1>{singleComment}</h1>
-                                    </div>
-                                ))
-                            ) : (
-                                <div> nuting</div>
-                            )}
-
-                            <button onClick={() => submitComment(property)}>Comment</button>
-                            <button onClick={() => handleChange(property)}>Show Comments</button> */}
                         </div>
                     ))
                 ) : (

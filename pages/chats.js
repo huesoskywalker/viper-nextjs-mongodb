@@ -10,6 +10,7 @@ export async function getServerSideProps(context) {
     const client = await clientPromise
     const db = client.db("viperDb")
     const users = await db.collection("users").find({}).toArray()
+    
 
     const vipers = JSON.parse(JSON.stringify(users))
 
@@ -98,7 +99,9 @@ const chats = ({ properties }) => {
                                 }}
                                 legacyBehavior
                             >
-                                <a onClick={() => grabUser(property)}> Add: {property.name} </a>
+                                <a onClick={() => grabUser(property)}>
+                                    Chat with: {property.name}
+                                </a>
                             </Link>
                         </div>
                     ))

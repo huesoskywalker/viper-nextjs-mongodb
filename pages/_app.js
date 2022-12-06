@@ -1,7 +1,6 @@
 import { SessionProvider, useSession, signIn } from "next-auth/react"
 import { useEffect } from "react"
 import Layout from "../components/Layout"
-import Sidebar from "../components/Sidebar"
 import "../styles/globals.css"
 
 function Auth({ children }) {

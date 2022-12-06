@@ -4,6 +4,7 @@ import Link from "next/link"
 
 const events = () => {
     const [loading, setLoading] = useState(true)
+    const [searchEvent, setSearchEvent] = useState("")
 
     useEffect(() => {
         const securePage = async () => {
@@ -24,6 +25,20 @@ const events = () => {
     return (
         <>
             <div>hello motherfucker</div>
+            <div>
+                <form>
+                    <label>Search</label>
+                    <input type="search" onChange={(e) => setSearchEvent(e.target.value)}></input>
+                    <Link
+                        href={{
+                            pathname: "/events/[q]",
+                            query: { q: searchEvent },
+                        }}
+                    >
+                        Go
+                    </Link>
+                </form>
+            </div>
             <ul>
                 <li>
                     <Link href="/events/music">

@@ -1,6 +1,5 @@
 import clientPromise from "../../lib/mongodb"
 import { useState } from "react"
-// import { ObjectId } from "mongodb"
 
 export async function getServerSideProps(context) {
     const { params, query } = context
@@ -8,37 +7,80 @@ export async function getServerSideProps(context) {
     // res.setHeader("Set-Cookie", ["name=viper"])
     console.log(query)
 
-    const { category } = params
+    const { q } = params
+    console.log(q)
 
     const client = await clientPromise
     const database = client.db("viperDb")
-    const collection = await database.collection("organized_events").find(query).toArray()
+    const collection = await database
+        .collection("organized_events")
+        .aggregate([
+            {
+                $match: {
+                    $or: [
+                        {
+                            event_name: q,
+                        },
+                        {
+                            location: q,
+                        },
+                        {
+                            date: q,
+                        },
+                        {
+                            category: q,
+                        },
+                    ],
+                },
+            },
+            {
+                $project: {
+                    _id: 1,
+                    organizer: 1,
+                    event_name: 1,
+                    location: 1,
+                    date: 1,
+                    category: 1,
+                    comment: 1,
+                    likes: 1,
+                    participants: 1,
+                },
+            },
+            {
+                $limit: 10,
+            },
+        ])
+        .toArray()
+
     const viper = JSON.parse(JSON.stringify(collection))
-    const filtered = viper.map((property) => {
-        return {
-            _id: property._id,
-            organizer: property.organizer,
-            // event_id: property.event_id,
-            event_name: property.event_name,
-            location: property.location,
-            date: property.date,
-            category: property.category,
-            comment: property.comment,
-            likes: property.likes,
-            participants: property.participants,
-        }
-    })
-    console.log(filtered)
+
+    // .find(query).toArray()
+    // const viper = JSON.parse(JSON.stringify(collection))
+    // const filtered = viper.map((property) => {
+    //     return {
+    //         _id: property._id,
+    //         organizer: property.organizer,
+    //         // event_id: property.event_id,
+    //         event_name: property.event_name,
+    //         location: property.location,
+    //         date: property.date,
+    //         category: property.category,
+    //         comment: property.comment,
+    //         likes: property.likes,
+    //         participants: property.participants,
+    //     }
+    // })
+    // console.log(filtered)
 
     return {
         props: {
-            category,
-            events: filtered,
+            q,
+            events: viper,
         },
     }
 }
 
-const EventsListByCategory = ({ events, category }) => {
+const EventsListByCategory = ({ events, q }) => {
     const [postComment, setPostComment] = useState([])
     const [changeText, setChangeText] = useState(false)
 
@@ -108,7 +150,7 @@ const EventsListByCategory = ({ events, category }) => {
         const result = await response.json()
         // console.log(result)
     }
-    const handleChange = (event) => {
+    const handleChange = () => {
         return setChangeText(!changeText)
     }
 
@@ -116,9 +158,10 @@ const EventsListByCategory = ({ events, category }) => {
         <div>
             <div>
                 <h1>
-                    Showing events for <i>{category}</i>
+                    Showing events for <i>{q}</i>
                 </h1>
                 <div>
+                    <label htmlFor="comment">Add a comment:</label>
                     <input
                         type="text"
                         id="comment"
@@ -148,7 +191,7 @@ const EventsListByCategory = ({ events, category }) => {
                             )}
 
                             <button onClick={() => submitComment(event)}>Comment</button>
-                            <button onClick={() => handleChange(event)}>Show Comments</button>
+                            <button onClick={() => handleChange()}>Show Comments</button>
                             <button onClick={() => participate(event)}>Participate</button>
                             <button onClick={() => like(event)}>Like</button>
                         </div>
