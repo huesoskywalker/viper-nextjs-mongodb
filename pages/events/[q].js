@@ -10,73 +10,59 @@ export async function getServerSideProps(context) {
     const { q } = params
     console.log(q)
 
-    const client = await clientPromise
-    const database = client.db("viperDb")
-    const collection = await database
-        .collection("organized_events")
-        .aggregate([
-            {
-                $match: {
-                    $or: [
-                        {
-                            event_name: q,
-                        },
-                        {
-                            location: q,
-                        },
-                        {
-                            date: q,
-                        },
-                        {
-                            category: q,
-                        },
-                    ],
+    try {
+        const client = await clientPromise
+        const database = client.db("viperDb")
+        const viper = await database
+            .collection("organized_events")
+            .aggregate([
+                {
+                    $match: {
+                        $or: [
+                            {
+                                event_name: q,
+                            },
+                            {
+                                location: q,
+                            },
+                            {
+                                date: q,
+                            },
+                            {
+                                category: q,
+                            },
+                        ],
+                    },
                 },
-            },
-            {
-                $project: {
-                    _id: 1,
-                    organizer: 1,
-                    event_name: 1,
-                    location: 1,
-                    date: 1,
-                    category: 1,
-                    comment: 1,
-                    likes: 1,
-                    participants: 1,
+                {
+                    $project: {
+                        _id: 1,
+                        organizer: 1,
+                        event_name: 1,
+                        location: 1,
+                        date: 1,
+                        category: 1,
+                        comment: 1,
+                        likes: 1,
+                        participants: 1,
+                    },
                 },
+                {
+                    $limit: 10,
+                },
+            ])
+            .toArray()
+
+        // const viper = JSON.parse(JSON.stringify(collection))
+
+        return {
+            props: {
+                q,
+                events: viper,
             },
-            {
-                $limit: 10,
-            },
-        ])
-        .toArray()
-
-    const viper = JSON.parse(JSON.stringify(collection))
-
-    // .find(query).toArray()
-    // const viper = JSON.parse(JSON.stringify(collection))
-    // const filtered = viper.map((property) => {
-    //     return {
-    //         _id: property._id,
-    //         organizer: property.organizer,
-    //         // event_id: property.event_id,
-    //         event_name: property.event_name,
-    //         location: property.location,
-    //         date: property.date,
-    //         category: property.category,
-    //         comment: property.comment,
-    //         likes: property.likes,
-    //         participants: property.participants,
-    //     }
-    // })
-    // console.log(filtered)
-
-    return {
-        props: {
-            q,
-            events: viper,
-        },
+        }
+    } catch (error) {
+        console.error(error)
     }
 }
 
@@ -129,12 +115,7 @@ const EventsListByCategory = ({ events, q }) => {
         const data = {
             _id: event._id,
             organizer: event.organizer,
-            // event_name: property.event_name,
-            // location: property.location,
-            // date: property.date,
-            // category: property.category,
             comment: postComment,
-            // likes: property.likes,
         }
 
         const JSONdata = JSON.stringify(data)
@@ -148,7 +129,6 @@ const EventsListByCategory = ({ events, q }) => {
         }
         const response = await fetch(endpoint, options)
         const result = await response.json()
-        // console.log(result)
     }
     const handleChange = () => {
         return setChangeText(!changeText)

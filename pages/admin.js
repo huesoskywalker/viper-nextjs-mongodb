@@ -1,5 +1,5 @@
 import { useSession, getSession } from "next-auth/react"
-import Image from "next/image"
+// import Image from "next/image"
 
 export async function getServerSideProps(context) {
     const session = await getSession(context)

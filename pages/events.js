@@ -10,7 +10,7 @@ const events = () => {
         const securePage = async () => {
             const session = await getSession()
             if (!session) {
-                return <h1>Yo motherfucker watch some stuff but not the whole shit</h1>
+                return <h1>Yo, watch some stuff but not the whole stuff</h1>
             } else {
                 setLoading(false)
             }
@@ -24,7 +24,6 @@ const events = () => {
 
     return (
         <>
-            <div>hello motherfucker</div>
             <div>
                 <form>
                     <label>Search</label>

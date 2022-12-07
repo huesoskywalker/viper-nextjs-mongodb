@@ -6,40 +6,40 @@ export async function getServerSideProps(context) {
     const session = await getSession(context)
 
     // console.log(session)
-    // try {
-    const client = await clientPromise
-    const database = client.db("viperDb")
-    const properties = await database
-        .collection("organized_events")
-        .find({ organizer: session.user?._id })
-        .toArray()
-    const viper = JSON.parse(JSON.stringify(properties))
+    try {
+        const client = await clientPromise
+        const database = client.db("viperDb")
+        const properties = await database
+            .collection("organized_events")
+            .find({ organizer: session.user?._id })
+            .toArray()
+        const viper = JSON.parse(JSON.stringify(properties))
 
-    const filtered = viper.map((property) => {
-        // const price = JSON.parse(JSON.stringify(property.price))
+        const filtered = viper.map((property) => {
+            // const price = JSON.parse(JSON.stringify(property.price))
+            return {
+                _id: property._id,
+                organizer: property.organizer,
+                event_name: property.event_name,
+                location: property.location,
+                date: property.date,
+                category: property.category,
+                comment: property.comment,
+                likes: property.likes,
+                // price: price.$numberDecimal,
+            }
+        })
+
         return {
-            _id: property._id,
-            organizer: property.organizer,
-            event_name: property.event_name,
-            location: property.location,
-            date: property.date,
-            category: property.category,
-            comment: property.comment,
-            likes: property.likes,
-            // price: price.$numberDecimal,
+            props: {
+                csrfToken: await getCsrfToken(context),
+                properties: filtered,
+                data: session,
+            },
         }
-    })
-
-    return {
-        props: {
-            csrfToken: await getCsrfToken(context),
-            properties: filtered,
-            data: session,
-        },
+    } catch (error) {
+        console.error(error)
     }
-    // } catch (error) {
-    //     console.error(error)
-    // }
 }
 
 export default function AdminDashboard({ csrfToken, properties, data }) {

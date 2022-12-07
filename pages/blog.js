@@ -1,11 +1,12 @@
 import { getCsrfToken, getSession, useSession } from "next-auth/react"
 import { useState } from "react"
 import clientPromise from "../lib/mongodb"
-// import { ObjectId } from "mongodb"
+import { ObjectId } from "mongodb"
+import Link from "next/link"
 
 export async function getServerSideProps(context) {
     const session = await getSession(context)
-    // const sessionId = session.user?._id
+    const sessionId = session.user?._id
     if (!session) {
         return {
             redirect: {
@@ -14,70 +15,133 @@ export async function getServerSideProps(context) {
             },
         }
     }
-
-    const client = await clientPromise
-    const database = client.db("viperDb")
-    const properties = await database
-        .collection("users")
-        .aggregate([
-            {
-                $unwind: "$participated",
-            },
-            {
-                $project: {
-                    _id: 0,
-                    name: 0,
-                    email: 0,
-                    image: 0,
-                    emailVerified: 0,
-                    role: 0,
+    try {
+        const client = await clientPromise
+        const database = client.db("viperDb")
+        const properties = await database
+            .collection("users")
+            .aggregate([
+                {
+                    $match: {
+                        _id: ObjectId(sessionId),
+                    },
                 },
-            },
+                {
+                    $unwind: "$participated",
+                },
+                // {
+                //     $unwind: "$vipers",
+                // },
+                {
+                    $project: {
+                        _id: 0,
+                        name: 0,
+                        email: 0,
+                        image: 0,
+                        emailVerified: 0,
+                        role: 0,
+                        vipers: 0,
+                    },
+                },
+                {
+                    $limit: 20,
+                },
+            ])
+            .toArray()
 
-            {
-                $limit: 20,
-            },
-        ])
-        .toArray()
+        const events = JSON.parse(JSON.stringify(properties))
 
-    const viper = JSON.parse(JSON.stringify(properties))
-    console.log(viper)
+        const filtered = events.map((property) => {
+            // const price = JSON.parse(JSON.stringify(property.price))
+            return {
+                _id: property.participated.event_id,
+                event_name: property.participated.event_name,
+                location: property.participated.location,
+                date: property.participated.date,
+                category: property.participated.category,
+            }
+        })
 
-    const filtered = viper.map((property) => {
-        // const price = JSON.parse(JSON.stringify(property.price))
+        const vipers = await database
+            .collection("users")
+            .aggregate([
+                {
+                    $match: {
+                        _id: ObjectId(sessionId),
+                    },
+                },
+                {
+                    $unwind: "$vipers",
+                },
+                {
+                    $project: {
+                        _id: 0,
+                        name: 0,
+                        email: 0,
+                        image: 0,
+                        emailVerified: 0,
+                        role: 0,
+                        participated: 0,
+                    },
+                },
+            ])
+            .toArray()
+
+        const users = JSON.parse(JSON.stringify(vipers))
+
+        const viper = users.map((property) => {
+            return {
+                _id: property.vipers._id,
+                name: property.vipers.name,
+                email: property.vipers.email,
+            }
+        })
+
         return {
-            _id: property.participated.event_id,
-            event_name: property.participated.event_name,
-            location: property.participated.location,
-            date: property.participated.date,
-            category: property.participated.category,
-            // comment: property.comment,
-            // likes: property.likes,
-            // // price: price.$numberDecimal,
+            props: {
+                session,
+                data: session ? "Hey there G" : "Login please",
+                properties: filtered,
+                vipers: viper,
+            },
         }
-    })
-
-    return {
-        props: {
-            session,
-            data: session ? "Hey there G" : "Login please",
-            properties: filtered,
-        },
+    } catch (error) {
+        console.error(error)
     }
 }
 
-const blog = ({ data, properties }) => {
+const blog = ({ data, properties, vipers }) => {
     const { data: session } = useSession()
     const [showEvents, setShowEvents] = useState(false)
+    const [showUsers, setShowUsers] = useState(false)
 
     const handleEvents = () => {
         return setShowEvents(!showEvents)
     }
 
     const handleUsers = () => {
-        return
+        return setShowUsers(!showUsers)
     }
+    const grabUser = async (property) => {
+        const user = {
+            _id: property._id,
+            name: property.name,
+            email: property.email,
+        }
+        const JSONuser = JSON.stringify(user)
 
+        const endpoint = `/api/chat`
+        const options = {
+            method: "POST",
+            headers: {
+                "Content-type": "application/json",
+            },
+            body: JSONuser,
+        }
+
+        const response = await fetch(endpoint, options)
+        const result = await response.json()
+    }
     return (
         <div>
             {data}
@@ -103,6 +167,23 @@ const blog = ({ data, properties }) => {
                     <h1>gudbuy</h1>
                 )}
             </div>
+            {showUsers ? (
+                vipers.map((property) => (
+                    <div key={property._id}>
+                        <Link
+                            href={{
+                                pathname: "/chats/[userid]",
+                                query: { userid: property._id },
+                            }}
+                            legacyBehavior
+                        >
+                            <a onClick={() => grabUser(property)}>Chat with: {property.name}</a>
+                        </Link>
+                    </div>
+                ))
+            ) : (
+                <h1>no vipers</h1>
+            )}
         </div>
     )
 }

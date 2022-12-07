@@ -1,26 +1,26 @@
 import { useSession, getSession, getCsrfToken } from "next-auth/react"
 import { InferGetServerSidePropsType } from "next"
-import clientPromise from "../lib/mongodb"
 
 export async function getServerSideProps(context) {
     const session = await getSession(context)
-    const name = session?.user?.name
-    const email = session?.user?.email
+    // const name = session?.user?.name
+    // const email = session?.user?.email
+    // console.log(session)
     try {
-        await clientPromise
+        // await clientPromise
 
         // const query = await getCsrfToken(context)
-        const client = await clientPromise
-        const db = client.db("viperDb")
-        const users = await db.collection("users").findOne({ name: name, email: email })
+        // const client = await clientPromise
+        // const db = client.db("viperDb")
+        // const users = await db.collection("users").findOne({ name: name, email: email })
 
-        const viper = JSON.parse(JSON.stringify(users))
+        // const viper = JSON.parse(JSON.stringify(users))
 
         return {
             props: {
                 isConnected: true,
                 session: session,
-                user: viper,
+                // user: viper,
             },
         }
     } catch (e) {
@@ -33,13 +33,13 @@ export async function getServerSideProps(context) {
 
 export default function Home({
     isConnected,
-    user,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) {
+}: // user,
+InferGetServerSidePropsType<typeof getServerSideProps>) {
     const { data: session, status } = useSession()
 
     const addRole = async () => {
         const data = {
-            id: user?._id,
+            id: session?.user?._id,
         }
         const JSONdata = JSON.stringify(data)
         const endpoint = `/api/role`
@@ -61,12 +61,12 @@ export default function Home({
                 <h1>
                     Welcome to <a href="https://huesoskywalker.netlify.app">viper</a>
                 </h1>
+                <div>
+                    <button onClick={addRole}>Add User Role</button>
+                </div>
                 {isConnected ? (
                     <div>
                         <h2 className="subtitle">You are connected to MongoDB</h2>
-                        <div>
-                            <button onClick={addRole}>Add User Role</button>
-                        </div>
                     </div>
                 ) : (
                     <h2 className="subtitle">

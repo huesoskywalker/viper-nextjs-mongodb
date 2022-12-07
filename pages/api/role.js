@@ -21,7 +21,7 @@ export default async function handler(req, res) {
 
             {
                 $set: {
-                    role: "user",
+                    role: "admin",
                 },
             }
         )

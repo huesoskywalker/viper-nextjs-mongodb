@@ -1,9 +1,7 @@
 import clientPromise from "../../../lib/mongodb"
 
 export default async function handler(req, res) {
-    // const { eventId } = req.query
     const body = req.body
-    console.log(body)
 
     async function run() {
         const client = await clientPromise
