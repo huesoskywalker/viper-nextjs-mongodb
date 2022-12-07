@@ -1,6 +1,7 @@
 import { useState } from "react"
 import clientPromise from "../../lib/mongodb"
 import { getSession } from "next-auth/react"
+import { useEffect } from "react"
 
 export async function getServerSideProps(context) {
     const session = await getSession(context)
@@ -55,12 +56,9 @@ export async function getServerSideProps(context) {
 }
 
 const userid = ({ userid, chat }) => {
-    // console.log(chat)
-
     const [message, setMessage] = useState("")
 
     const sendMessage = async () => {
-        // console.log("que pasa pa")
         const chat = {
             _id: userid,
             message: message,

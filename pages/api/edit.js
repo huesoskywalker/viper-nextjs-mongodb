@@ -18,7 +18,6 @@ export default async function handler(req, res) {
             { $push: { comment: body.comment } },
             { upsert: true }
         )
-        console.log(response)
         res.json(response)
     }
     run().catch(console.dir)

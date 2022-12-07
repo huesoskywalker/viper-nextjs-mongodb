@@ -1,5 +1,4 @@
 import { useSession, getSession } from "next-auth/react"
-// import Image from "next/image"
 
 export async function getServerSideProps(context) {
     const session = await getSession(context)
@@ -15,10 +14,9 @@ export default function Admin() {
     const { data: session, status } = useSession({
         required: true,
         onUnauthenticated() {
-            return "Authenticate motherfucker..."
+            return "Authenticate ..."
         },
     })
-    // console.log(session)
 
     if (status === "loading") {
         return "Loading or not authenticated..."

@@ -19,8 +19,8 @@ export const authOptions = {
     adapter: MongoDBAdapter(clientPromise),
     session: {
         strategy: "database",
-        maxAge: 30 * 24 * 60 * 60, // 30 days
-        updateAge: 24 * 60 * 60, // 24 hours
+        maxAge: 30 * 24 * 60 * 60, 
+        updateAge: 24 * 60 * 60, 
     },
     secret: process.env.NEXTAUTH_SECRET,
     callbacks: {

@@ -3,24 +3,12 @@ import { InferGetServerSidePropsType } from "next"
 
 export async function getServerSideProps(context) {
     const session = await getSession(context)
-    // const name = session?.user?.name
-    // const email = session?.user?.email
-    // console.log(session)
+
     try {
-        // await clientPromise
-
-        // const query = await getCsrfToken(context)
-        // const client = await clientPromise
-        // const db = client.db("viperDb")
-        // const users = await db.collection("users").findOne({ name: name, email: email })
-
-        // const viper = JSON.parse(JSON.stringify(users))
-
         return {
             props: {
                 isConnected: true,
                 session: session,
-                // user: viper,
             },
         }
     } catch (e) {
@@ -33,27 +21,8 @@ export async function getServerSideProps(context) {
 
 export default function Home({
     isConnected,
-}: // user,
-InferGetServerSidePropsType<typeof getServerSideProps>) {
-    const { data: session, status } = useSession()
+}: InferGetServerSidePropsType<typeof getServerSideProps>) {
 
-    const addRole = async () => {
-        const data = {
-            id: session?.user?._id,
-        }
-        const JSONdata = JSON.stringify(data)
-        const endpoint = `/api/role`
-        const options = {
-            method: "PUT",
-            headers: {
-                "Content-type": "application/json",
-            },
-            body: JSONdata,
-        }
-        const response = await fetch(endpoint, options)
-        const result = await response.json()
-        console.log(result)
-    }
 
     return (
         <div className="container">
@@ -61,9 +30,6 @@ InferGetServerSidePropsType<typeof getServerSideProps>) {
                 <h1>
                     Welcome to <a href="https://huesoskywalker.netlify.app">viper</a>
                 </h1>
-                <div>
-                    <button onClick={addRole}>Add User Role</button>
-                </div>
                 {isConnected ? (
                     <div>
                         <h2 className="subtitle">You are connected to MongoDB</h2>

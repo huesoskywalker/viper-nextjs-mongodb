@@ -23,7 +23,6 @@ export default async function handler(req, res) {
     })
 
     if (!viper) {
-        console.log("Adding viper")
 
         const newViper = await db.collection("users").findOneAndUpdate(
             {

@@ -5,7 +5,6 @@ import { useState } from "react"
 export async function getServerSideProps(context) {
     const session = await getSession(context)
 
-    // console.log(session)
     try {
         const client = await clientPromise
         const database = client.db("viperDb")
@@ -58,7 +57,6 @@ export default function AdminDashboard({ csrfToken, properties, data }) {
             category: event.target.category.value,
             comment: [],
         }
-        console.log(data)
         const JSONdata = JSON.stringify(data)
         const endpoint = "/api/form"
         const options = {
@@ -111,6 +109,7 @@ export default function AdminDashboard({ csrfToken, properties, data }) {
     return (
         <>
             <div>
+                <h2>Create an event</h2>
                 <form onSubmit={handleSubmit}>
                     <input name="csrfToken" type="hidden" defaultValue={csrfToken} />
 
@@ -157,6 +156,7 @@ export default function AdminDashboard({ csrfToken, properties, data }) {
                 <div>
                     {oldEvent ? (
                         <div>
+                            <h2>Edit the event</h2>
                             <form onSubmit={handleEdit}>
                                 <input name="csrfToken" type="hidden" defaultValue={csrfToken} />
 
@@ -179,7 +179,7 @@ export default function AdminDashboard({ csrfToken, properties, data }) {
                             </form>
                         </div>
                     ) : (
-                        <div>bike papa</div>
+                        <div></div>
                     )}
                 </div>
             </div>

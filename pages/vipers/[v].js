@@ -4,59 +4,56 @@ export async function getServerSideProps(context) {
     const { params } = context
     const { v } = params
 
-    // try {
-    const client = await clientPromise
-    const db = client.db("viperDb")
-    const collection = await db
-        .collection("users")
-        .aggregate([
-            {
-                $match: {
-                    $or: [
-                        {
-                            _id: v,
-                        },
-                        {
-                            name: v,
-                        },
-                        {
-                            email: v,
-                        },
-                        {
-                            role: v,
-                        },
-                    ],
+    try {
+        const client = await clientPromise
+        const db = client.db("viperDb")
+        const collection = await db
+            .collection("users")
+            .aggregate([
+                {
+                    $match: {
+                        $or: [
+                            {
+                                _id: v,
+                            },
+                            {
+                                name: v,
+                            },
+                            {
+                                email: v,
+                            },
+                            {
+                                role: v,
+                            },
+                        ],
+                    },
                 },
-            },
-            {
-                $project: {
-                    _id: 1,
-                    name: 1,
-                    email: 1,
+                {
+                    $project: {
+                        _id: 1,
+                        name: 1,
+                        email: 1,
+                    },
                 },
-            },
-            {
-                $limit: 20,
-            },
-        ])
-        .toArray()
+                {
+                    $limit: 20,
+                },
+            ])
+            .toArray()
 
-    const vipers = JSON.parse(JSON.stringify(collection))
+        const vipers = JSON.parse(JSON.stringify(collection))
 
-    console.log(collection)
-    return {
-        props: {
-            vipers: vipers,
-        },
+        return {
+            props: {
+                vipers: vipers,
+            },
+        }
+    } catch (error) {
+        console.error(error)
     }
-    // } catch (error) {
-    //     console.error(error)
-    // }
 }
 
 const v = ({ vipers }) => {
-    // console.log(collection)
-
     const addUser = async (viper) => {
         const data = {
             _id: viper._id,

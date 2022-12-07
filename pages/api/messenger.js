@@ -12,7 +12,6 @@ export default async function handler(req, res) {
     const db = client.db("viperDb")
     const collection = await db.collection("chats").findOneAndUpdate(
         {
-            // members: {
             $or: [
                 {
                     members: [sessionId, body._id],
@@ -31,20 +30,6 @@ export default async function handler(req, res) {
                 },
             },
         }
-        // {
-        //     $unwind: "$messages",
-        // },
-        // {
-        //     $project: {
-        //         _id: 0,
-        //         sender: 1,
-        //         message: 1,
-        //         timestamp: 1,
-        //     },
-        // }
-        // {
-        //     $currentDate: { timestamp: { $type: "timestamp" } },
-        // }
     )
 
     res.json(collection)

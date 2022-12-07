@@ -20,47 +20,61 @@ export default async function handler(req, res) {
 
     const client = await clientPromise
     const db = client.db("viperDb")
-    // const viper = db.collection("participated_events").insertOne(event)
 
-    const viper = await db.collection("users").findOneAndUpdate(
-        {
-            _id: ObjectId(sessionId),
-        },
-        {
-            $push: {
-                participated: event,
+    const finder = await db.collection("users").findOne({
+        _id: ObjectId(sessionId),
+        participated: event,
+    })
+
+    if (!finder) {
+        const viper = await db.collection("users").findOneAndUpdate(
+            {
+                _id: ObjectId(sessionId),
             },
-        }
-    )
+            {
+                $push: {
+                    participated: event,
+                },
+            }
+        )
 
-    const tracker = await db.collection("organized_events").findOneAndUpdate(
-        {
-            _id: ObjectId(body._id),
-        },
-        {
-            $push: {
-                participants: sessionId,
+        const tracker = await db.collection("organized_events").findOneAndUpdate(
+            {
+                _id: ObjectId(body._id),
             },
-        },
-        { upsert: true }
-    )
-    // const viper = await db
-    //     .collection("users")
-    //     .aggregate([
-    //         {
-    //             $match: {
-    //                 _id: ObjectId(sessionId),
-    //             },
-    //         },
-    //         {
-    //             $addFields: {
-    //                 participate: { event },
-    //             },
-    //         },
-    //     ])
-    //     .toArray()
+            {
+                $push: {
+                    participants: sessionId,
+                },
+            },
+            { upsert: true }
+        )
 
-    // console.log(viper)
+        res.json(viper, tracker)
+    } else {
+        const noViper = await db.collection("users").findOneAndUpdate(
+            {
+                _id: ObjectId(sessionId),
+            },
+            {
+                $pull: {
+                    participated: event,
+                },
+            }
+        )
 
-    res.json(viper, tracker)
+        const noTracker = await db.collection("organized_events").findOneAndUpdate(
+            {
+                _id: ObjectId(body._id),
+            },
+            {
+                $pull: {
+                    participants: sessionId,
+                },
+            },
+            { upsert: true }
+        )
+
+        res.json(noViper, noTracker)
+    }
 }

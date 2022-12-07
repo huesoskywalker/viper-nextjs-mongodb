@@ -29,9 +29,6 @@ export async function getServerSideProps(context) {
                 {
                     $unwind: "$participated",
                 },
-                // {
-                //     $unwind: "$vipers",
-                // },
                 {
                     $project: {
                         _id: 0,
@@ -164,7 +161,7 @@ const blog = ({ data, properties, vipers }) => {
                         </div>
                     ))
                 ) : (
-                    <h1>gudbuy</h1>
+                    <h1></h1>
                 )}
             </div>
             {showUsers ? (
@@ -182,7 +179,7 @@ const blog = ({ data, properties, vipers }) => {
                     </div>
                 ))
             ) : (
-                <h1>no vipers</h1>
+                <h1></h1>
             )}
         </div>
     )

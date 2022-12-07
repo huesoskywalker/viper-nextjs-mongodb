@@ -5,15 +5,13 @@ export async function getServerSideProps(context) {
     const { params, query } = context
     // console.log(req.headers.cookie)
     // res.setHeader("Set-Cookie", ["name=viper"])
-    console.log(query)
 
     const { q } = params
-    console.log(q)
 
     try {
         const client = await clientPromise
         const database = client.db("viperDb")
-        const viper = await database
+        const collection = await database
             .collection("organized_events")
             .aggregate([
                 {
@@ -53,7 +51,7 @@ export async function getServerSideProps(context) {
             ])
             .toArray()
 
-        // const viper = JSON.parse(JSON.stringify(collection))
+        const viper = JSON.parse(JSON.stringify(collection))
 
         return {
             props: {
@@ -74,7 +72,6 @@ const EventsListByCategory = ({ events, q }) => {
         const data = {
             _id: event._id,
             organizer: event.organizer,
-            // event_id: event.event_id,
             event_name: event.event_name,
             location: event.location,
             date: event.date,
@@ -91,7 +88,6 @@ const EventsListByCategory = ({ events, q }) => {
         }
         const response = await fetch(endpoint, options)
         const result = await response.json()
-        // console.log(result)
     }
 
     const like = async (event) => {

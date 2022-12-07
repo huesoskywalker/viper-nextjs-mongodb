@@ -1,8 +1,6 @@
 import { useState } from "react"
 import Link from "next/link"
 
-// export async function getServerSideProps(context) {}
-
 const vipers = () => {
     const [searchVipers, setSearchVipers] = useState("")
 

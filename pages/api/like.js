@@ -9,7 +9,6 @@ export default async function handler(req, res) {
 
     const _id = req.body._id
 
-    console.log(_id)
 
     const client = await clientPromise
     const db = client.db("viperDb")
@@ -18,10 +17,8 @@ export default async function handler(req, res) {
         _id: ObjectId(_id),
         likes: sessionId,
     })
-    console.log(isLiked)
 
     if (!isLiked) {
-        console.log("Adding the like")
 
         const like = await db.collection("organized_events").findOneAndUpdate(
             {
@@ -35,7 +32,6 @@ export default async function handler(req, res) {
         )
         res.json(like)
     } else {
-        console.log("dislike")
         const dislike = await db.collection("organized_events").findOneAndUpdate(
             {
                 _id: ObjectId(_id),

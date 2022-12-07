@@ -1,7 +1,6 @@
 import { builtinModules } from "module"
 import clientPromise from "../../lib/mongodb"
 import { ObjectId } from "mongodb"
-// import { comments } from "../blog"
 import { unstable_getServerSession } from "next-auth"
 import { authOptions } from "./auth/[...nextauth]"
 
@@ -22,7 +21,6 @@ export default async function handler(req, res) {
             },
             { $push: { comment: [sessionId, body.comment] } }
         )
-        console.log(response)
         res.json(response)
     }
     run().catch(console.dir)
