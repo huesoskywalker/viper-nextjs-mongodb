@@ -84,7 +84,6 @@ export default function AdminDashboard({ csrfToken, properties, data }) {
         const data = {
             editedEvent: {
                 organizer: oldEvent.organizer,
-                // event_id: oldEvent.event_id,
                 event_name: event.target.name.value,
                 location: event.target.location.value,
                 date: event.target.date.value,
@@ -148,40 +147,48 @@ export default function AdminDashboard({ csrfToken, properties, data }) {
                                 <p>{property.category}</p>
                             </div>
                             <button onClick={() => edit(property)}>Edit</button>
+                            {oldEvent ? (
+                                <div>
+                                    <h2>Edit the event</h2>
+                                    <form onSubmit={handleEdit}>
+                                        <input
+                                            name="csrfToken"
+                                            type="hidden"
+                                            defaultValue={csrfToken}
+                                        />
+
+                                        <label htmlFor="name">Event</label>
+                                        <input type="text" id="name" name="name" required />
+
+                                        <label htmlFor="location">Location</label>
+                                        <input
+                                            type="text"
+                                            id="location"
+                                            name="location"
+                                            required
+                                        />
+
+                                        <label htmlFor="date">Date</label>
+                                        <input type="date" id="date" name="date" required />
+
+                                        <select id="category">
+                                            <option value="Music">Music</option>
+                                            <option value="Food">Food</option>
+                                            <option value="Drinks">Drinks</option>
+                                        </select>
+
+                                        <button type="submit">Submit</button>
+                                    </form>
+                                </div>
+                            ) : (
+                                <div></div>
+                            )}
                         </div>
                     ))
                 ) : (
                     <form>gudbuy</form>
                 )}
-                <div>
-                    {oldEvent ? (
-                        <div>
-                            <h2>Edit the event</h2>
-                            <form onSubmit={handleEdit}>
-                                <input name="csrfToken" type="hidden" defaultValue={csrfToken} />
-
-                                <label htmlFor="name">Event</label>
-                                <input type="text" id="name" name="name" required />
-
-                                <label htmlFor="location">Location</label>
-                                <input type="text" id="location" name="location" required />
-
-                                <label htmlFor="date">Date</label>
-                                <input type="date" id="date" name="date" required />
-
-                                <select id="category">
-                                    <option value="Music">Music</option>
-                                    <option value="Food">Food</option>
-                                    <option value="Drinks">Drinks</option>
-                                </select>
-
-                                <button type="submit">Submit</button>
-                            </form>
-                        </div>
-                    ) : (
-                        <div></div>
-                    )}
-                </div>
+                <div></div>
             </div>
         </>
     )
