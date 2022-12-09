@@ -2,6 +2,7 @@ import { useState } from "react"
 import clientPromise from "../../lib/mongodb"
 import { getSession } from "next-auth/react"
 import { useEffect } from "react"
+import { useRouter } from "next/router"
 
 export async function getServerSideProps(context) {
     const session = await getSession(context)
@@ -56,7 +57,14 @@ export async function getServerSideProps(context) {
 }
 
 const userid = ({ userid, chat }) => {
+    const router = useRouter()
     const [message, setMessage] = useState("")
+    const [isRefreshing, setIsRefreshing] = useState(false)
+
+    const refreshData = () => {
+        router.replace(router.asPath)
+        setIsRefreshing(true)
+    }
 
     const sendMessage = async () => {
         const chat = {
@@ -76,7 +84,12 @@ const userid = ({ userid, chat }) => {
 
         const response = await fetch(endpoint, options)
         const result = await response.json()
+
+        refreshData()
     }
+    useEffect(() => {
+        setIsRefreshing(false)
+    }, [chat])
 
     return (
         <div>

@@ -7,6 +7,7 @@ export default async function handler(req, res) {
     const sessionId = session.user?._id
 
     const body = req.body
+    console.log(body.message)
 
     const client = await clientPromise
     const db = client.db("viperDb")
@@ -32,5 +33,5 @@ export default async function handler(req, res) {
         }
     )
 
-    res.json(collection)
+    res.status(200).json(collection)
 }
